@@ -9,7 +9,7 @@ const getCountries = async () => {
         const url = `https://holidayapi.com/v1/countries?pretty&key=${API_KEY}`
         const res = await fetch(url)
         const data = await res.json()
-        console.log("data",data)
+        // console.log("data",data)
         return data
     } catch (error) {
         console.log("error",error)
@@ -111,6 +111,7 @@ const langInput = document.getElementById("language-query")
 const holidayCountry = document.getElementById("holidays-list").children[0]
 
 let countryName 
+let languageName
 let url = `https://holidayapi.com/v1/holidays?pretty&key=${API_KEY}&country=${countryName}&year=2021`
 
 document.getElementById("holidays-btn").addEventListener("click", () => {
@@ -118,29 +119,53 @@ document.getElementById("holidays-btn").addEventListener("click", () => {
 })
 const getHoliday  = async() => {
     try {
-        if(!countryInput.value) {
+        if(!countryInput.value) {  
+            if(!langInput.value) {
+                languageName = "en"
+                countryName ="VN"
+                url = `https://holidayapi.com/v1/holidays?pretty&key=${API_KEY}&country=${countryName}&year=2021&language=${languageName}`
+            } else  {
+                languageName = langInput.value
+                countryName ="VN"
+                url = `https://holidayapi.com/v1/holidays?pretty&key=${API_KEY}&country=${countryName}&year=2021&language=${languageName}`
+            }
             
-            countryName ="VN"
-            url = `https://holidayapi.com/v1/holidays?pretty&key=${API_KEY}&country=${countryName}&year=2021`
             await getCountries()
-            // const countryTest = await getCountries()
-            // console.log(countryTest.countries)
-            // // const test = countryTest.countries.find(({code} => code ==="VN"))
-            // console.log(test)
+            // get country name based on Code and function getCountries()
+
+                const countryTest = await getCountries() // get api data response 
+                const countryList= countryTest.countries // get specific country data
+                let countryOutput= countryList.find(country => country.code ===`${countryName}`)
+                // console.log(countryOutput)
+
             const res = await fetch(url)
             const data = await res.json()
-            holidayCountry.textContent=`Holidays of ${countryName}`
+            holidayCountry.textContent=`Holidays of ${countryOutput.name}`
             console.log(data)
             return data
         }
         else {
-            countryName =countryInput.value
-             url = `https://holidayapi.com/v1/holidays?pretty&key=${API_KEY}&country=${countryName}&year=2021`
+            if(!langInput.value) {
+                countryName =countryInput.value
+                url = `https://holidayapi.com/v1/holidays?pretty&key=${API_KEY}&country=${countryName}&year=2021`
+            } else {
+                languageName = langInput.value
+                countryName =countryInput.value
+                url = `https://holidayapi.com/v1/holidays?pretty&key=${API_KEY}&country=${countryName}&year=2021&language=${languageName}`
+            }
+            
+             
+                const countryTest = await getCountries() // get api country data response 
+                const countryList= countryTest.countries // get specific country data
+                let countryOutput= countryList.find(country => country.code ===`${countryName}`)
+                // console.log(countryOutput)
+
             const res = await fetch(url)
             const data = await res.json()
-            holidayCountry.textContent=`Holidays of ${countryName}`
+            holidayCountry.textContent=`Holidays of ${countryOutput.name}`
             console.log(data)
-            return data        }
+            return data        
+        }
     } catch (error) {
         console.log("error",error)
     }
@@ -152,17 +177,37 @@ const renderHoliday = async () => {
         const holidayList = document.getElementById("holidays-list")
         const ulHolidayList = holidayList.children[1]
         ulHolidayList.innerHTML=""
-        // console.log(data.holidays[0].date)
-        data.holidays.forEach((holiday,index) => {
-            const z = document.createElement("li") 
-            z.innerHTML=` <div class="bullet">${index + 1}</div>
-            <div class="li-wrapper">
-              <div class="li-title">${holiday.name}</div>
-              <div class="li-text">${holiday.date}</div>
-            </div>`
 
-            ulHolidayList.appendChild(z)
+        if(yearInput.value && monthInput.value && dayInput.value) {
+            const dateArray = data.holidays
+            const specificDate = dateArray.filter( val => val.date.includes(`${yearInput.value}-${monthInput.value}-${dayInput.value}`) )
+            console.log(specificDate)
+
+                const z = document.createElement("li") 
+                z.innerHTML=` <div class="bullet">1</div>
+                <div class="li-wrapper">
+                  <div class="li-title">${specificDate[0].name}</div>
+                  <div class="li-text">${specificDate[0].date}</div>
+                </div>`
+                ulHolidayList.appendChild(z)  
+                return
+            }
+   
+        else {
+            data.holidays.forEach((holiday,index) => {
+                const z = document.createElement("li") 
+                z.innerHTML=` <div class="bullet">${index + 1}</div>
+                <div class="li-wrapper">
+                  <div class="li-title">${holiday.name}</div>
+                  <div class="li-text">${holiday.date}</div>
+                </div>`
+    
+                ulHolidayList.appendChild(z)
+            
         })
+        
+
+       }
     } catch (error) {
         console.log("error",error)
     }
