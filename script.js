@@ -177,23 +177,65 @@ const renderHoliday = async () => {
         const holidayList = document.getElementById("holidays-list")
         const ulHolidayList = holidayList.children[1]
         ulHolidayList.innerHTML=""
+        const dateArray = data.holidays
+
 
         if(yearInput.value && monthInput.value && dayInput.value) {
-            const dateArray = data.holidays
-            const specificDate = dateArray.filter( val => val.date.includes(`${yearInput.value}-${monthInput.value}-${dayInput.value}`) )
+            // const dateArray = data.holidays
+            const specificDate = dateArray.filter( arr => arr.date.includes(`${yearInput.value}-${monthInput.value}-${dayInput.value}`) )
             console.log(specificDate)
-
+             specificDate.forEach((holiday,index) => {
                 const z = document.createElement("li") 
-                z.innerHTML=` <div class="bullet">1</div>
+                z.innerHTML=` <div class="bullet">${index+1}</div>
                 <div class="li-wrapper">
-                  <div class="li-title">${specificDate[0].name}</div>
-                  <div class="li-text">${specificDate[0].date}</div>
+                  <div class="li-title">${holiday.name}</div>
+                  <div class="li-text">${holiday.date}</div>
+                </div>`
+                ulHolidayList.appendChild(z)
+
+        })} else if (yearInput.value) {
+            const specificDate = dateArray.filter( arr => arr.date.includes(`${yearInput.value}`) )
+
+            specificDate.forEach((holiday,index) => {
+                const z = document.createElement("li") 
+                z.innerHTML=` <div class="bullet">${index+1}</div>
+                <div class="li-wrapper">
+                  <div class="li-title">${holiday.name}</div>
+                  <div class="li-text">${holiday.date}</div>
                 </div>`
                 ulHolidayList.appendChild(z)  
-                return
-            }
-   
-        else {
+            })
+        
+        } else if (monthInput.value) {
+            // const specificDate = dateArray.filter( arr => arr.date.includes(`${monthInput.value}`))
+            const specificDate = dateArray.filter( arr => arr.date.split('-')[1].includes(`${monthInput.value}`))
+
+            console.log(specificDate)
+            specificDate.forEach((holiday,index) => {
+                const z = document.createElement("li") 
+                z.innerHTML=` <div class="bullet">${index+1}</div>
+                <div class="li-wrapper">
+                  <div class="li-title">${holiday.name}</div>
+                  <div class="li-text">${holiday.date}</div>
+                </div>`
+                ulHolidayList.appendChild(z)  
+            })
+        
+        } else if (dayInput.value) {
+            const specificDate = dateArray.filter( arr => arr.date.split('-')[2].includes(`${dayInput.value}`))
+
+            specificDate.forEach((holiday,index) => {
+                const z = document.createElement("li") 
+                z.innerHTML=` <div class="bullet">${index+1}</div>
+                <div class="li-wrapper">
+                  <div class="li-title">${holiday.name}</div>
+                  <div class="li-text">${holiday.date}</div>
+                </div>`
+                ulHolidayList.appendChild(z)  
+            })
+        
+        } else if( (!yearInput.value && !monthInput.value && !dayInput.value)) {
+
             data.holidays.forEach((holiday,index) => {
                 const z = document.createElement("li") 
                 z.innerHTML=` <div class="bullet">${index + 1}</div>
@@ -204,11 +246,23 @@ const renderHoliday = async () => {
     
                 ulHolidayList.appendChild(z)
             
-        })
+        })}
+          
+            // specificDate.forEach((holiday,index) => {
+            //     const z = document.createElement("li") 
+            //     z.innerHTML=` <div class="bullet">${index+1}</div>
+            //     <div class="li-wrapper">
+            //       <div class="li-title">${holiday.name}</div>
+            //       <div class="li-text">${holiday.date}</div>
+            //     </div>`
+            //     ulHolidayList.appendChild(z)  
+            // })
+        
+       
         
 
-       }
-    } catch (error) {
+       
+     }catch (error) {
         console.log("error",error)
     }
 }
