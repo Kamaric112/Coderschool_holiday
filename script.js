@@ -180,9 +180,9 @@ const renderHoliday = async () => {
         const dateArray = data.holidays
 
 
-        if(yearInput.value && monthInput.value && dayInput.value) {
+        if( monthInput.value && dayInput.value || yearInput.value && monthInput.value && dayInput.value) {
             // const dateArray = data.holidays
-            const specificDate = dateArray.filter( arr => arr.date.includes(`${yearInput.value}-${monthInput.value}-${dayInput.value}`) )
+            const specificDate = dateArray.filter( arr => arr.date.includes(`2021-${monthInput.value}-${dayInput.value}`) )
             console.log(specificDate)
              specificDate.forEach((holiday,index) => {
                 const z = document.createElement("li") 
@@ -234,7 +234,20 @@ const renderHoliday = async () => {
                 ulHolidayList.appendChild(z)  
             })
         
-        } else if( (!yearInput.value && !monthInput.value && !dayInput.value)) {
+        }  else if (searchInput.value) {
+            const specificDate = dateArray.filter( arr => arr.name.toLowerCase().includes(`${searchInput.value}`) )
+            
+            specificDate.forEach((holiday,index) => {
+                const z = document.createElement("li") 
+                z.innerHTML=` <div class="bullet">${index + 1}</div>
+                <div class="li-wrapper">
+                  <div class="li-title">${holiday.name}</div>
+                  <div class="li-text">${holiday.date}</div>
+                </div>`
+    
+                ulHolidayList.appendChild(z)
+            
+        })} else if( (!yearInput.value && !monthInput.value && !dayInput.value && !searchInput.value)) {
 
             data.holidays.forEach((holiday,index) => {
                 const z = document.createElement("li") 
